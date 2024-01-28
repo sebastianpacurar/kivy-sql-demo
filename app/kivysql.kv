@@ -1,0 +1,51 @@
+FloatView:
+
+<FloatView>:
+
+    MDTabs:
+        id: tab_container
+        on_tab_switch: app.on_tab_switch(*args)
+
+    BoxLayout:
+        orientation: 'vertical'
+        pos_hint: {'right':.35, 'top': 0.8}
+        size_hint: .2, None
+        height: dp(40)
+
+        MDTextField:
+            id: table_field
+            icon_left: 'table'
+            hint_text: 'table name'
+            size_hint_x: 1.5
+            on_focus: if self.focus: app.dropdown()
+
+        MDRaisedButton:
+            id: get_table
+            text: 'Get Data'
+            size_hint: .5, None
+            height: dp(20)
+            on_release: app.generate_table()
+
+
+    BoxLayout:
+        orientation: 'vertical'
+        pos_hint: {'right': .85, 'top': 0.8}
+        size_hint: .2, None
+        height: dp(40)
+
+        MDTextField
+            id: insert_field
+            icon_left: 'plus'
+            hint_text: 'Insert Data'
+            size_hint_x: 1.5
+
+        MDRaisedButton:
+            id: insert_btn
+            text: 'Insert'
+            size_hint: .5, None
+            height: dp(20)
+
+
+<Tab>:
+    MDLabel
+        pos_hint: {'center_x': .5, 'center_y': .5}

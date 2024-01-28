@@ -1,0 +1,7 @@
+kivy==2.3.0
+kivymd==1.2.0
+pillow==10.2.0
+mysql-connector==2.2.9
+mysql-connector-python==8.3.0
+mysql-connector-python-rf==2.2.2
+python-decouple==3.8
