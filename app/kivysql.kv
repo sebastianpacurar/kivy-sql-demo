@@ -6,46 +6,98 @@ FloatView:
         id: tab_container
         on_tab_switch: app.on_tab_switch(*args)
 
-    BoxLayout:
-        orientation: 'vertical'
-        pos_hint: {'right':.35, 'top': 0.8}
-        size_hint: .2, None
+    MDBoxLayout:
+        orientation: 'horizontal'
+        pos_hint: {'center_x':.5, 'top': 0.8}
+        size_hint: .5, None
+        spacing: dp(20)
         height: dp(40)
 
         MDTextField:
             id: table_field
             icon_left: 'table'
             hint_text: 'table name'
-            size_hint_x: 1.5
+            size_hint_x: 1
             on_focus: if self.focus: app.dropdown()
 
         MDRaisedButton:
-            id: get_table
-            text: 'Get Data'
-            size_hint: .5, None
+            id: operations_btn
+            text: 'Operations'
             height: dp(20)
-            on_release: app.generate_table()
-
-
-    BoxLayout:
-        orientation: 'vertical'
-        pos_hint: {'right': .85, 'top': 0.8}
-        size_hint: .2, None
-        height: dp(40)
-
-        MDTextField
-            id: insert_field
-            icon_left: 'plus'
-            hint_text: 'Insert Data'
-            size_hint_x: 1.5
-
-        MDRaisedButton:
-            id: insert_btn
-            text: 'Insert'
-            size_hint: .5, None
-            height: dp(20)
+            on_release: app.operations_dialog()
 
 
 <Tab>:
     MDLabel
         pos_hint: {'center_x': .5, 'center_y': .5}
+
+
+<OperationsContent>:
+    orientation: 'vertical'
+    adaptive_height: True
+
+    MDSegmentedControl:
+        pos_hint: {"center_x": .5, "center_y": .5}
+        md_bg_color: app.theme_cls.primary_color
+        segment_color: app.theme_cls.accent_color
+        separator_color: 'white'
+        on_active: app.handle_segment_selection(*args)
+
+        MDSegmentedControlItem:
+            text: "Create"
+
+        MDSegmentedControlItem:
+            text: "Insert"
+
+        MDSegmentedControlItem:
+            text: "Update"
+
+        MDSegmentedControlItem:
+            text: "Delete"
+
+    Spacer:
+    Divider:
+    MDScrollView:
+        id: scroll_view
+        size_hint_y: None
+        height: scroll_view.children[0].height * 2 if scroll_view.children else 0
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            adaptive_height: True
+            spacing: dp(20)
+
+            MDTextField:
+                id: table_field_1
+                icon_left: 'insert'
+                hint_text: 'table name 1'
+
+            MDTextField:
+                id: table_field_2
+                icon_left: 'insert'
+                hint_text: 'table name 2'
+
+            MDTextField:
+                id: table_field_3
+                icon_left: 'insert'
+                hint_text: 'table name 3'
+    Divider:
+
+
+
+<Divider>:
+    orientation: 'vertical'
+    size_hint_y: None
+    height: dp(2)
+    canvas.before:
+        Color:
+            rgba: app.theme_cls.divider_color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+
+<Spacer>:
+    size_hint_y: None
+    height: dp(20)

@@ -1,3 +1,9 @@
+import kivy
+from kivy.core.window import Window
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDFlatButton
+from kivymd.uix.dialog import MDDialog
+
 from Database import Database
 
 from kivymd.app import MDApp
@@ -7,6 +13,8 @@ from kivymd.uix.tab import MDTabsBase
 
 from kivymd.uix.datatables import MDDataTable
 from kivy.metrics import dp
+
+kivy.require('2.3.0')
 
 
 class FloatView(MDFloatLayout):
@@ -18,6 +26,18 @@ class Tab(MDFloatLayout, MDTabsBase):
     pass
 
 
+class OperationsContent(MDBoxLayout):
+    pass
+
+
+class Divider(MDBoxLayout):
+    pass
+
+
+class Spacer(MDBoxLayout):
+    pass
+
+
 class KivySqlApp(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -26,10 +46,12 @@ class KivySqlApp(MDApp):
         self.table_widget = None
         self.db = Database()
         self.curr_db = self.db.curr_db
+        self.curr_op = 'Create'
 
     def build(self):
         self.theme_cls.theme_style = 'Light'
         self.theme_cls.primary_palette = 'Blue'
+        self.theme_cls.accent_palette = 'LightBlue'
 
     def on_start(self):
         self.generate_tabs()
@@ -58,8 +80,9 @@ class KivySqlApp(MDApp):
 
     def select_table(self, table):
         """ select table target from dropdown """
-        self.db.table = table
-        self.root.ids.table_field.text = self.db.table
+        self.db.curr_table = table
+        self.root.ids.table_field.text = self.db.curr_table
+        self.generate_table()
         self.menu.dismiss()
 
     def generate_table(self):
@@ -78,17 +101,46 @@ class KivySqlApp(MDApp):
         self.root.add_widget(table)
         self.table_widget = table
 
+    def operations_dialog(self):
+        dialog = MDDialog(
+            type='custom',
+            content_cls=OperationsContent(),
+            buttons=[
+                MDFlatButton(
+                    text="Add",
+                    theme_text_color="Custom",
+                    text_color=self.theme_cls.primary_color,
+                ),
+                MDFlatButton(
+                    text="Cancel",
+                    theme_text_color="Custom",
+                    text_color=self.theme_cls.error_color,
+                    on_release=lambda *args: self.dismiss_dialog(dialog)
+                ),
+
+            ])
+        dialog.open()
+
+    def dismiss_dialog(self, dialog):
+        dialog.dismiss()
+
+    def handle_segment_selection(self, *args):
+        segment_text = args[1].text
+        self.curr_op = segment_text
+
     def generate_tabs(self):
         """ add tabs to MDTabs with id tab_container """
         for i in self.db.get_all_dbs():
             tab = Tab(title=i)
             self.root.ids.tab_container.add_widget(tab)
 
-    def on_tab_switch(self, instance_tabs, instance_tab, instance_tab_label, tab_text):
+    def on_tab_switch(self, *args):
         """ set db to current selected and clear menu_list """
+        tab_text = args[3]
         self.db.set_db(tab_text)
         self.menu_list.clear()
 
 
 if __name__ == '__main__':
+    Window.maximize()  # set to full screen
     KivySqlApp().run()
